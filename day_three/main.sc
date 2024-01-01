@@ -1,8 +1,12 @@
 // Advent of Code Day 3
 // Adam Gluck
 
-def retrieveFullNum(x: Int, y: Int, grid: Array[List[Char]], seen: Set[(Int, Int)]): (Int, Set[(Int, Int)]) = {
- 
+def retrieveFullNum(
+    x: Int,
+    y: Int,
+    grid: Array[List[Char]],
+    seen: Set[(Int, Int)]
+): (Int, Set[(Int, Int)]) = {
   var updatedSeen = seen + ((x, y))
   val line = grid(x)
   var curNum: String = s"${line(y)}"
@@ -26,15 +30,20 @@ def retrieveFullNum(x: Int, y: Int, grid: Array[List[Char]], seen: Set[(Int, Int
   (curNum.toInt, updatedSeen)
 }
 
-def getGearRatio(x: Int, y: Int, grid: Array[List[Char]], seen: Set[(Int, Int)]): (Int, Set[(Int, Int)]) = {
+def getGearRatio(
+    x: Int,
+    y: Int,
+    grid: Array[List[Char]],
+    seen: Set[(Int, Int)]
+): (Int, Set[(Int, Int)]) = {
   var list = List[Int]()
   var updatedSeen = seen
 
   // Add full digit if grid(x)(y) is digit, is in range, and not seen before
   def addIfValid(x: Int, y: Int) = {
     if (
-      x >= 0 && x < grid.length && 
-      y >= 0 && y < grid(x).length && 
+      x >= 0 && x < grid.length &&
+      y >= 0 && y < grid(x).length &&
       grid(x)(y).isDigit &&
       !(updatedSeen.contains(x, y))
     ) {
@@ -48,7 +57,7 @@ def getGearRatio(x: Int, y: Int, grid: Array[List[Char]], seen: Set[(Int, Int)])
   for (dx <- -1 to 1; dy <- -1 to 1) {
     addIfValid(x + dx, y + dy)
   }
-  
+
   // Set gearRatio to product of surrounding nums if exactly 2
   var gearRatio = 0
   if (list.length == 2) {
