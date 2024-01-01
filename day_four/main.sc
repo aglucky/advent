@@ -29,7 +29,6 @@ class Card(
           case _ =>
             throw new IllegalArgumentException("Invalid numbers formatting")
       }
-      
       case _ => throw new IllegalArgumentException("Invalid Card format")
   }
 
