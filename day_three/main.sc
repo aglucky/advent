@@ -1,3 +1,6 @@
+// Advent of Code Day 3
+// Adam Gluck
+
 def retrieveFullNum(x: Int, y: Int, grid: Array[List[Char]], seen: Set[(Int, Int)]): (Int, Set[(Int, Int)]) = {
  
   var updatedSeen = seen + ((x, y))

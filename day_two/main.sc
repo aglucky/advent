@@ -23,7 +23,7 @@ class Hand(var blue: Int, var green: Int, var red: Int):
                 processColor(list, "red", (x) => (this.red = x))
                 processColor(list, "green", (x) => (this.green = x))
             }
-            case _ => throw new IllegalArgumentException("Invalid hand format")
+            case null => throw new IllegalArgumentException("Invalid hand format")
 
     }
 
