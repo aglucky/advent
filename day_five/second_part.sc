@@ -1,22 +1,6 @@
 // Advent of Code Day 5
 // Adam Gluck
 
-// Convert individual seeds for part 1
-def chainSeedConversions(
-    seed: Long,
-    conversions: List[List[(Long, Long, Long)]]
-): Long = {
-  conversions.foldLeft(seed)((curVal, conversion) => {
-    conversion
-      .collectFirst {
-        case (dest, source, range)
-            if ((curVal >= source) && (curVal < source + range)) =>
-          curVal + (dest - source)
-      }
-      .getOrElse(curVal)
-  })
-}
-
 // Get possible output ranges for seed range
 def rangeConversion(
     seedRange: (Long, Long),

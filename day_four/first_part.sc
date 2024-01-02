@@ -56,13 +56,6 @@ def dayFour() = {
   // Process input into cards
   var cards = content.split("\n").map(Card(_))
   
-  // Increment copies based on wins
-  cards.foreach(card =>{
-    for (i <- 0 until card.numWinners) do
-        if ((card.id + i) < cards.length)
-          cards(card.id+i).copies += card.copies
-  })
-
   // Sum total number of card copies
-  cards.foldLeft(0)((acc: Int, x: Card) => acc + x.copies)
+  cards.foldLeft(0)((acc: Int, x: Card) => acc + x.getPoints())
 }

@@ -6,7 +6,7 @@ val cardOrder = Map(
   'A' -> 13,
   'K' -> 12,
   'Q' -> 11,
-  'J' -> -1,
+  'J' -> 10,
   'T' -> 9,
   '9' -> 8,
   '8' -> 7,
@@ -20,30 +20,15 @@ val cardOrder = Map(
 
 import HandType._ // Allow us to use "FiveOfAKind" instead of "HandType.FiveOfAKind" for enum
 object HandType extends Enumeration {
+  // Order enum by least to greatest value
   val HighCard, OnePair, TwoPair, ThreeOfAKind, FullHouse, FourOfAKind,
       FiveOfAKind = Value
 }
 
 def getType(hand: String): HandType.Value = {
-  // Allow jokers to "upgrade" hand
-  val counts = hand.groupBy(identity).mapValues(_.length).toMap
-  val updatedCounts =
-    // Add Joker count to whatever card has highest
-    if (counts.getOrElse('J', 0) < 5) {
-      val countsWithoutJ = counts - 'J'
-      val (highestCard, highestCount) = countsWithoutJ.maxBy(_._2)
-      countsWithoutJ.updated(
-        highestCard,
-        highestCount + counts.getOrElse('J', 0)
-      )
-    }
-    // Account for 5 Jokers in hand
-    else {
-      counts
-    }
-
   // Sort map by values and pattern match to enum
-  val grouped = updatedCounts.toList.sortBy(-_._2)
+  val grouped =
+    hand.groupBy(identity).mapValues(_.length).toList.sortBy(_._2).reverse
   grouped match {
     case (_, 5) :: Nil           => FiveOfAKind
     case (_, 4) :: _             => FourOfAKind

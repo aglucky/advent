@@ -63,14 +63,6 @@ class Game(var id: Int, var hands: Array[Hand]):
     else 0
   }
 
-  // Return product of min possible lengths of each color
-  def getPower(): Int = {
-    val redMin = this.hands.map(_.red).max
-    val greenMin = this.hands.map(_.green).max
-    val blueMin = this.hands.map(_.blue).max
-    redMin * blueMin * greenMin
-  }
-
   override def toString(): String = {
     return s"Game ${this.id}: ${this.hands.mkString(";")}"
   }
@@ -81,10 +73,12 @@ def dayTwo(): Int = {
   val input_path: os.Path = os.pwd / "input.txt"
   val content: String = os.read(input_path)
 
+  val validHand = Hand(14,13,12)
+
   // Convert input to solution
   content
     .split("\n")
     .map(Game(_))
-    .map(_.getPower())
+    .map(_.getValidId(validHand))
     .reduce((acc, x) => (acc + x))
 }

@@ -43,14 +43,14 @@ def daySix() = {
       timeList = timeStr
         .split(" ")
         .map(_.filter(_.isDigit))
-        .filter(_.length > 1)
+        .filter(_.length > 0)
         .map(_.toLong)
         .toList
 
       distList = distStr
         .split(" ")
         .map(_.filter(_.isDigit))
-        .filter(_.length > 1)
+        .filter(_.length > 0)
         .map(_.toLong)
         .toList
     }

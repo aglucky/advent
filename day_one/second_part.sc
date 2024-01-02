@@ -43,7 +43,7 @@ def dayOne(): Int = {
   val content: String = os.read(input_path)
 
   // Convert input to solution
-  val sum: Int = content
+  content
     .split("\n") // Get lines in input files
     .map(getNums) // Convert to numbers
     .filter(_.nonEmpty) // Don't count line if empty
@@ -52,6 +52,4 @@ def dayOne(): Int = {
     ) // Convert to 2 digit number with first and last in list
     .map(_.toInt)
     .reduce((x, y) => x + y) // Sum all lines
-
-  sum
 }
