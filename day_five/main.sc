@@ -57,7 +57,6 @@ def chainRangeConversions(
     seedRanges: List[(Long, Long)],
     conversions: List[List[(Long, Long, Long)]]
 ): List[(Long, Long)] = {
-
   seedRanges.flatMap { seedRange =>
     conversions.foldLeft(List(seedRange)) { (currentRanges, conversion) =>
       currentRanges.flatMap(rangeConversion(_, conversion))
