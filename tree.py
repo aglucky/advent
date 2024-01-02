@@ -13,7 +13,7 @@ def tree(size, stump, level=0) :
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("size", help="The size of the tree", type=int)
+    parser.add_argument("--size", help="The size of the tree", type=int, default=10)
     parser.add_argument("--stump", help="The height of the tree stump", type=int, default=3)
     args = parser.parse_args()
     tree(args.size, args.stump)
