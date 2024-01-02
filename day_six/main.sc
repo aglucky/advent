@@ -60,5 +60,4 @@ def daySix() = {
 
   val (min, max) = findWays(timeList.mkString.toLong, distList.mkString.toLong)
   max - min + 1 // Get elements in range
-
 }
