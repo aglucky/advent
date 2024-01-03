@@ -7,16 +7,16 @@ def findWays(time: Long, dist: Long): (Long, Long) = {
 
   def binarySearch(min: Long, max: Long, searchForMax: Boolean): Long = {
     var start = min
-    var end = max
+    var endInclusive = max
     var answer = if (searchForMax) min else max
 
-    while (start <= end) {
-      val mid = start + (end - start) / 2
+    while (start <= endInclusive) {
+      val mid = start + (endInclusive - start) / 2
       if (condition(mid)) {
         answer = mid
-        if (searchForMax) start = mid + 1 else end = mid - 1
+        if (searchForMax) start = mid + 1 else endInclusive = mid - 1
       } else {
-        if (searchForMax) end = mid - 1 else start = mid + 1
+        if (searchForMax) endInclusive = mid - 1 else start = mid + 1
       }
     }
     answer

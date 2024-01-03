@@ -1,11 +1,19 @@
 // Advent of Code Day 5
 // Adam Gluck
 
+type Range = (Long, Long) // start and end are both inclusive
+type SeedInput =
+  (
+      Long,
+      Long,
+      Long
+  ) // in form (dest, start, range) where (start, start+range-1) -> (dest, end+range-1)
+
 // Get possible output ranges for seed range
 def rangeConversion(
-    seedRange: (Long, Long),
-    conversionList: List[(Long, Long, Long)]
-): List[(Long, Long)] = {
+    seedRange: Range,
+    conversionList: List[SeedInput]
+): List[Range] = {
   val (start, end) = seedRange
   var before = (start, end)
   var after = (start, end)
@@ -25,22 +33,22 @@ def rangeConversion(
       }
     }
 
-
   (possibleRanges, before, after) match {
-    case (Nil, _, _) => List(seedRange) //Return input if no possible conversions
+    case (Nil, _, _) =>
+      List(seedRange) // Return input if no possible conversions
     case (_, b, a) =>
-      //Add ranges not converted
+      // Add ranges not converted
       (if (b._2 >= b._1) List(b) else Nil) ++
-      (if (a._2 >= a._1) List(a) else Nil) ++
-      possibleRanges
+        (if (a._2 >= a._1) List(a) else Nil) ++
+        possibleRanges
   }
 }
 
 // Apply conversions to all seeds
 def chainRangeConversions(
-    seedRanges: List[(Long, Long)],
-    conversions: List[List[(Long, Long, Long)]]
-): List[(Long, Long)] = {
+    seedRanges: List[Range],
+    conversions: List[List[SeedInput]]
+): List[Range] = {
   seedRanges.flatMap { seedRange =>
     conversions.foldLeft(List(seedRange)) { (currentRanges, conversion) =>
       currentRanges.flatMap(rangeConversion(_, conversion))
@@ -55,8 +63,8 @@ def dayFive() = {
   val content: String = os.read(input_path)
 
   // Convert input into data structures
-  var seeds: List[(Long, Long)] = List()
-  var conversions: List[List[(Long, Long, Long)]] = List()
+  var seeds: List[Range] = List()
+  var conversions: List[List[SeedInput]] = List()
   content.split("\n\n").toList match
     case (head: String) :: (rest: List[String]) => {
       seeds = head

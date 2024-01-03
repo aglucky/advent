@@ -1,10 +1,18 @@
 // Advent of Code Day 5
 // Adam Gluck
 
+type Range = (Long, Long) // start and end are both inclusive
+type SeedInput =
+  (
+      Long,
+      Long,
+      Long
+  ) // in form (dest, start, range) where (start, start+range-1) -> (dest, end+range-1)
+
 // Convert individual seeds for part 1
 def chainSeedConversions(
     seed: Long,
-    conversions: List[List[(Long, Long, Long)]]
+    conversions: List[List[SeedInput]]
 ): Long = {
   conversions.foldLeft(seed)((curVal, conversion) => {
     conversion
@@ -25,7 +33,7 @@ def dayFive() = {
 
   // Convert input into data structures
   var seeds: List[Long] = List()
-  var conversions: List[List[(Long, Long, Long)]] = List()
+  var conversions: List[List[SeedInput]] = List()
   content.split("\n\n").toList match
     case (head: String) :: (rest: List[String]) => {
       seeds = head
