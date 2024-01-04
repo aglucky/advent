@@ -9,6 +9,7 @@ def isInBounds(pos: Pos, grid: Grid): Boolean = {
   x >= 0 && y >= 0 && x < grid.length && y < grid(x).length
 }
 
+// Find first non-S value in loop
 def getFirstPipe(start: Pos, grid: Grid): (Pos, Pos) = {
   val (x, y) = start
   val validUp = Set('F', '7', '|')
@@ -115,18 +116,20 @@ def getLoopLen(start: Pos, dPos: Pos, grid: Grid): Int = {
 @main
 def dayTen() = {
   // Read in file for input
-  val input_path: os.Path = os.pwd / "input.txt"
+  val input_path: os.Path = os.pwd / "test.txt"
   val content: String = os.read(input_path)
 
   val grid: Grid =
     content.split("\n").map(_.toCharArray().toList).toList
 
+  // Find position of "S"
   var start = (-1, -1)
   for (x <- (0 until grid.length))
     for (y <- (0 until grid(x).length))
       if (grid(x)(y) == 'S')
         start = (x, y)
 
+  // Return perimeter of loop /2 for longest distance
   val (firstPipe, dPos) = getFirstPipe(start, grid)
   getLoopLen(firstPipe, dPos, grid) / 2
 }
