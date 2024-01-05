@@ -11,13 +11,24 @@ def isValid(gears: List[Char], conditions: List[Int]): Boolean = {
   rep == conditions
 }
 
+def isPossible(gears: List[Char], conditions: List[Int], index: Int): Boolean = {
+  val rep = gears.slice(0, index+1).mkString
+    .split('.')
+    .filter(_.length() > 0)
+    .map(_.length())
+    .toList
+
+  conditions.startsWith(rep.take(rep.length-1))
+}
+
 def findWays(gears: List[Char], conditions: List[Int]): Int = {
 
   val start = gears.indexOf('?')
   start match
     case -1 if isValid(gears, conditions) => 1
     case -1 => 0
-    case _ => findWays(gears.updated(start, '.'), conditions) + findWays(gears.updated(start, '#'), conditions)
+    case index  if isPossible(gears, conditions, index) => findWays(gears.updated(start, '.'), conditions) + findWays(gears.updated(start, '#'), conditions)
+    case _ => 0
 }
 
 @main
