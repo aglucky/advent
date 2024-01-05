@@ -9,5 +9,6 @@ To run, ensure you have [Ammonite](https://ammonite.io) installed and run the ``
 
 ```console
 cd day_one
+curl https://adventofcode.com/2023/day/1/input -H 'Cookie: session=<your session id>' > input.txt
 amm first_part.sc
 ```
