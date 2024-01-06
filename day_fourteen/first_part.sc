@@ -1,6 +1,7 @@
 // Advent of Code Day 14
 // Adam Gluck
 
+// Tilt a string left
 def tiltLeft(str: String): String = {
   var numSpaces = 0
   var tilted = List[Char]()
@@ -17,9 +18,7 @@ def tiltLeft(str: String): String = {
       case _ => {
         numSpaces += 1
       }
-
   })
-
   tilted.appendedAll("." * numSpaces).mkString
 }
 
@@ -31,6 +30,7 @@ def dayFourteen() = {
 
   val grid = content.split('\n').toList
 
+  // Tilt grid north and calculate load
   grid.transpose
     .map(row => {
       tiltLeft(row.mkString)
