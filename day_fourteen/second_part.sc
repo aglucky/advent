@@ -71,10 +71,42 @@ def getLoad(grid: List[String]): Int = {
     .sum
 }
 
-// Take a given pattern to find nth element in O(1)
+// Get first index of cycle
+def findFirstCycle(grid: List[String], range:(Int, Int) = (150, 200)): (List[Int], Int) = {
+  // Get sums between range
+  val (start, endInclusive) = range
+  val sumList = (start to endInclusive).map(repeatCycle(grid, _)).map(getLoad)
+
+  // Find first cycle and start index
+  val seen = scala.collection.mutable.Map[Int, Int]()
+  var cycleStart = -1
+  var cycle = List[Int]()
+  sumList.zipWithIndex.find { case (sum, index) =>
+    seen.get(sum) match
+      case Some(startIndex) =>
+        val sliceLength = index - startIndex
+        if sumList.slice(startIndex, index) == sumList.slice(
+            index,
+            index + index - startIndex
+          )
+        then {
+          cycleStart = startIndex
+          cycle = sumList.slice(cycleStart, index).toList
+          true
+        } else {
+          false
+        }
+      case _ => {
+        seen(sum) = index
+        false
+      }
+  }
+  (cycle, cycleStart + start)
+}
+
+// Get nth sum given a pattern
 def findSumWithPatten(index: Long, pattern: (List[Int], Int)): Int = {
   val (cycle, start) = pattern
-
   return cycle(((index - start) % cycle.length).toInt)
 }
 
@@ -85,20 +117,6 @@ def dayFourteen() = {
   val content: String = os.read(input_path)
 
   val grid = content.split('\n').toList
-
-  // Cycle found in input data
-  val inputPattern = (List(
-    106390, 106374, 106350, 106332, 106337, 106336, 106351, 106369, 106390,
-    106404, 106398, 106389, 106375, 106349, 106333, 106336, 106337, 106350,
-    106370, 106389, 106405, 106397
-  ), 120)
-
-  // Cycle found in test data
-  val testPattern = (List(
-    63, 68, 69, 69, 65, 64, 65
-  ), 120)
-
-  // Find cycle by hand and use pattern to find desired index
-  findSumWithPatten(1000000000L, inputPattern)
-
+  val pattern = findFirstCycle(grid)
+  findSumWithPatten(1000000000L, pattern)
 }
