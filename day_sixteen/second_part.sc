@@ -1,202 +1,120 @@
 // Advent of Code Day 16
 // Adam Gluck
 
-val doubleEnergy = Set('2', '1', '+', 'N', 'Y')
-val singleEnergy = Set('#', 'X', '!', '?', '~', '=', 'v', 'V', '^', '%')
+val energized = Set('#', '!', '~', 'v', '^')
 
 def updateGrid(
-    grid: List[String],
+    grid: Array[Array[Char]],
     pos: (Int, Int),
     char: Char = '#'
-): List[String] = {
+): Unit = {
   val (x, y) = pos
-  grid.updated(x, grid(x).updated(y, char))
+  grid(x)(y) = char
 }
 
 def shineLight(
-    grid: List[String],
-    pos: (Int, Int),
-    dir: (Int, Int),
-    visited: Set[((Int, Int), (Int, Int))] = Set.empty
-): List[String] = {
-  val (x, y) = pos
-  val (dx, dy) = dir
-  val state = (pos, dir)
-  if (
-    ((x < 0) || (x >= grid.length) || (y < 0) || (y >= grid(x).length)) ||
-    (visited.contains(state))
-  )
-    grid
-  else {
-    val newVisited = visited + state
-    grid(x)(y) match
-      case '.' | '#' | 'X' | '2' => {
-        val updateChar = (grid(x)(y), dx, dy) match {
-          case ('2', _, _) | ('#', 0, _) | ('X', _, 0) => '2'
-          case (_, _, 0)                               => '#'
-          case (_, 0, _)                               => 'X'
-        }
-        shineLight(
-          updateGrid(grid, pos, updateChar),
-          (x + dx, y + dy),
-          dir,
-          newVisited
-        )
-      }
-      case '|' | '!' | '?' | '1' => {
-        val updateChar = (grid(x)(y), dx, dy) match {
-          case ('1', _, _) | ('!', 0, _) | ('?', _, 0) => '1'
-          case (_, _, 0)                               => '!'
-          case (_, 0, _)                               => '?'
-        }
-        dy match
-          case 0 =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x + dx, y + dy),
-              dir,
-              newVisited
-            )
-          case _ => {
-            val topGrid =
-              shineLight(
-                updateGrid(grid, pos, updateChar),
-                (x - 1, y),
-                (-1, 0),
-                newVisited
-              )
-            shineLight(
-              updateGrid(topGrid, pos, updateChar),
-              (x + 1, y),
-              (1, 0),
-              newVisited
-            )
+    grid: Array[Array[Char]],
+    startPos: (Int, Int),
+    startDir: (Int, Int)
+): Unit = {
+  val stack = scala.collection.mutable.Stack[((Int, Int), (Int, Int))]()
+  val visited = scala.collection.mutable.Set[((Int, Int), (Int, Int))]()
+
+  stack.push((startPos, startDir))
+
+  while (stack.nonEmpty) {
+    val ((x, y), (dx, dy)) = stack.pop()
+    val state = ((x, y), (dx, dy))
+
+    if (
+      !((x < 0) || (x >= grid.length) || (y < 0) || (y >= grid(x).length)) &&
+      !visited.contains(state)
+    ) {
+      visited.add(state)
+      grid(x)(y) match {
+        case '.' | '#' =>
+          updateGrid(grid, (x, y))
+          stack.push(((x + dx, y + dy), (dx, dy)))
+        case '|' | '!' =>
+          val updateChar = '!'
+          updateGrid(grid, (x, y), updateChar)
+          if (dy == 0) {
+            stack.push(((x + dx, y + dy), (dx, dy)))
+          } else {
+            stack.push(((x - 1, y), (-1, 0)))
+            stack.push(((x + 1, y), (1, 0)))
           }
-      }
-      case '-' | '~' | '=' | '+' => {
-        val updateChar = (grid(x)(y), dx, dy) match {
-          case ('+', _, _) | ('~', 0, _) | ('=', _, 0) => '+'
-          case (_, _, 0)                               => '~'
-          case (_, 0, _)                               => '='
-        }
-        dx match
-          case 0 =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x + dx, y + dy),
-              dir,
-              newVisited
-            )
-          case _ => {
-            val leftGrid =
-              shineLight(
-                updateGrid(grid, pos, updateChar),
-                (x, y - 1),
-                (0, -1),
-                newVisited
-              )
-            shineLight(
-              updateGrid(leftGrid, pos, updateChar),
-              (x, y + 1),
-              (0, 1),
-              newVisited
-            )
+        case '-' | '~' =>
+          val updateChar = '~'
+          updateGrid(grid, (x, y), updateChar)
+          if (dx == 0) {
+            stack.push(((x + dx, y + dy), (dx, dy)))
+          } else {
+            stack.push(((x, y - 1), (0, -1)))
+            stack.push(((x, y + 1), (0, 1)))
           }
+        case '/' | '^' =>
+          val updateChar = '^'
+          updateGrid(grid, (x, y), updateChar)
+          stack.push(((x - dy, y - dx), (-dy, -dx)))
+        case '\\' | 'v' =>
+          val updateChar = 'v'
+          updateGrid(grid, (x, y), updateChar)
+          stack.push(((x + dy, y + dx), (dy, dx)))
+        case _ =>
       }
-      case '/' | '^' | '%' | 'N' => {
-        val updateChar = (grid(x)(y), dx, dy) match {
-          case ('N', _, _) | ('^', 0, _) | ('%', _, 0) => 'N'
-          case (_, _, 0)                               => '^'
-          case (_, 0, _)                               => '%'
-        }
-        dir match
-          case (0, 1) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x - 1, y),
-              (-1, 0),
-              newVisited
-            )
-          case (0, -1) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x + 1, y),
-              (1, 0),
-              newVisited
-            )
-          case (1, 0) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x, y - 1),
-              (0, -1),
-              newVisited
-            )
-          case (-1, 0) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x, y + 1),
-              (0, 1),
-              newVisited
-            )
-      }
-      case '\\' | 'v' | 'V' | 'Y' => {
-        val updateChar = (grid(x)(y), dx, dy) match {
-          case ('Y', _, _) | ('v', 0, _) | ('V', _, 0) => 'Y'
-          case (_, _, 0)                               => 'v'
-          case (_, 0, _)                               => 'V'
-        }
-        dir match
-          case (0, 1) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x + 1, y),
-              (1, 0),
-              newVisited
-            )
-          case (0, -1) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x - 1, y),
-              (-1, 0),
-              newVisited
-            )
-          case (1, 0) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x, y + 1),
-              (0, 1),
-              newVisited
-            )
-          case (-1, 0) =>
-            shineLight(
-              updateGrid(grid, pos, updateChar),
-              (x, y - 1),
-              (0, -1),
-              newVisited
-            )
-      }
-      case _ => grid
+    }
   }
+}
+
+def findEnergy(grid: Array[Array[Char]]): Int = {
+  grid
+    .flatMap(str =>
+      str.map(char => {
+        char match
+          case c if energized.contains(c) => 1
+          case _                          => 0
+      })
+    )
+    .sum
+}
+
+def deepClone(grid: Array[Array[Char]]): Array[Array[Char]] = {
+  grid.map(_.clone())
 }
 
 @main
 def daySixteen() = {
   // Read in file for input
-  val input_path: os.Path = os.pwd / "test.txt"
+  val input_path: os.Path = os.pwd / "input.txt"
   val content: String = os.read(input_path)
 
-  val grid = content.split('\n').toList
-  shineLight(grid, (0, 0), (0, 1))
-  .map(str =>
-    str.map(char => {
-      char match
-        case c if doubleEnergy.contains(c) => 1
-        case c if singleEnergy.contains(c) => 1
-        case _ => 0
-    }).map(_ match {
-      case 2 => '2'
-      case 1 => '#'
-      case _ => '.'
-    }).mkString
-  )
+  val grid = content.split('\n').map(_.toCharArray())
+  var possibleSums = List[(Int, Int, Int)]()
+
+  for (i <- (0 until grid.length))
+    val tempGrid = deepClone(grid)
+    shineLight(tempGrid, (i, 0), (0, 1))
+    possibleSums = possibleSums.appended((i, 0, findEnergy(tempGrid)))
+
+  for (i <- (0 until grid.length))
+    val tempGrid = deepClone(grid)
+    shineLight(tempGrid, (i, grid(i).length-1), (0, -1))
+    possibleSums =
+      possibleSums.appended((i, grid(i).length - 1, findEnergy(tempGrid)))
+
+  for (i <- (0 until grid.head.length))
+    val tempGrid = deepClone(grid)
+    shineLight(tempGrid, (0, i), (1, 0))
+    possibleSums = possibleSums.appended((0, i, findEnergy(tempGrid)))
+
+  for (i <- (0 until grid.head.length))
+    val tempGrid = deepClone(grid)
+    shineLight(tempGrid, (grid.length, i), (-1, 0))
+    possibleSums =
+      possibleSums.appended((grid.length - 1, i, findEnergy(tempGrid)))
+
+  possibleSums.maxBy(_._3)
+
+
 }

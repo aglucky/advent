@@ -84,15 +84,4 @@ def daySixteen() = {
           case c if energized.contains(c) => 1
           case _                          => 0
       })).sum
-
-  // grid.map(str =>
-  //   str.map(char => {
-  //       char match
-  //         case c if energized.contains(c) => 1
-  //         case _                          => 0
-  //     })
-  //     .map(_ match {
-  //       case 1 => '#'
-  //       case _ => '.'
-  //     }).mkString)
 }
